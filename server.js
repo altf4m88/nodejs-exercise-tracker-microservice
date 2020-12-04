@@ -40,6 +40,7 @@ app.post('/api/exercise/new-user', (req, res) => {
   const name = req.body.username;
 
   User.find({username : name}, (err, data) => {
+    if(err) console.error(err);
     if(!data.length){
       User.create({username : name}, (err, data) => {
         if(err) console.error(err);
