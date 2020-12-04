@@ -37,7 +37,19 @@ app.get('/', (req, res) => {
 });
 
 app.post('/api/exercise/new-user', (req, res) => {
-  const username = req.body.username;
+  const name = req.body.username;
+
+  User.find({username : name}, (err, data) => {
+    if(!data.length){
+      User.create({username : name}, (err, data) => {
+        if(err) console.error(err);
+        else res.json(data);
+      })
+    } else {
+      res.json({error : "username already taken"});
+    }
+  });
+
 });
 
 
