@@ -16,18 +16,15 @@ db.once('open', function() {
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
-  username : {type: String, required: true, unique: true}
+  username : {type: String, required: true, unique: true},
+  exercise : [{
+    description: String, 
+      duration: Number,
+      date: Date
+  }] 
 });
 
-const exerciseSchema = new Schema({
-  userId : {type: Schema.Types.ObjectId, required: true},
-  description : {type: String, required: true},
-  duration : {type: Number, required: true},
-  date : {type: Number, required: true, match: /([12]\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01]))/,}
-})
-
 const User = mongoose.model('User', userSchema);
-const Exercise = mongoose.model('Exercise', exerciseSchema);
 
 app.use(cors());
 app.use(bodyParser.urlencoded({extended : true}));
