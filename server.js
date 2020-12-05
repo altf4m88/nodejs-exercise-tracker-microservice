@@ -64,6 +64,38 @@ app.get('/api/exercise/users', (req, res) => {
   });
 })
 
+app.post('/api/exercise/add', (req, res) => {
+  let dataInput = req.body;
+  console.log(dataInput);
+  if (!dataInput.userId) {
+    res.send("please input userId");
+  } else if(!dataInput.description){
+    res.send("please input description");
+  } else if(!dataInput.duration){
+    res.send("please input duration");
+  } else if (!dataInput.date) {
+    input.date = new Date();
+  }
+  let date = new Date(dataInput.date).toDateString();
+  let duration = parseInt(dataInput.duration)
+
+  User.findByIdAndUpdate( dataInput.userId, 
+  { $push : { exercise : {
+    description : dataInput.description, 
+    duration : duration,
+    date : date
+  }}},
+  (err, data) => {
+    if(err) console.error(err);
+    res.json({
+      _id : data._id,
+      username: data.username,
+      description: dataInput.description,
+      duration: duration,
+      date: date
+    });
+  });
+});
 
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
