@@ -97,6 +97,74 @@ app.post('/api/exercise/add', (req, res) => {
   });
 });
 
+app.get('/api/exercise/log', (req, res) => {
+  let userId = req.query.userId;
+  let fromDate = req.query.from;
+  let toDate = req.query.to;
+  let limit = req.query.limit;
+
+  let userLogInfo = {};
+
+  if(!fromDate && !toDate){
+    User.findById(userId, (err, data) => {
+      if(err) return console.error(err);
+      if(data === null) res.send('no data found');
+
+      let exercise = data.exercise;
+      let userLog = [];
+
+      for(let x = 0; x < limitCheck(limit, exercise.length); x ++){
+        userLog.push({
+          description : exercise[x].description,
+          duration : exercise[x].duration,
+          date : exercise[x].date
+        });
+      };
+
+      userLogInfo = {
+        _id : userId,
+        username : data.username,
+        count : userLog.length,
+        log : userLog
+      };
+      res.json(userLogInfo);
+    });
+  } else{
+    User.find().where("_id").equals(userId).where("exercise.date").gt(fromDate).lt(toDate).exec( (err, data) =>{
+      if(err) return console.error(err);
+      if(data.length === 0) res.send('no data found');
+
+      let exercise = data[0].exercise;
+      let userLog = [];
+
+      for(let x = 0; x < limitCheck(limit, exercise.length); x ++){
+        userLog.push({
+          description : exercise[x].description,
+          duration : exercise[x].duration,
+          date : exercise[x].date
+        });
+      };
+
+      userLogInfo = {
+        _id : userId,
+        username : data[0].username,
+        count : userLog.length,
+        log : userLog
+      };
+
+      res.json(userLogInfo);
+    })
+  }
+});
+
+const limitCheck = (x, y) => {
+  if(x <= y){
+    return x;
+  } else {
+    return y;
+  }
+};
+
 const listener = app.listen(process.env.PORT || 3000, () => {
   console.log('Your app is listening on port ' + listener.address().port)
 })
