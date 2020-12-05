@@ -50,6 +50,19 @@ app.post('/api/exercise/new-user', (req, res) => {
 
 });
 
+app.get('/api/exercise/users', (req, res) => {
+  User.find({}, (err, data) => {
+    if(err) return console.error(err);
+    console.log(data);
+    let responseArray = [];
+    for(let item in data){
+      responseArray.push({
+        username : data[item].username, _id : data[item]._id
+      });
+    };
+    res.json(responseArray);
+  });
+})
 
 
 const listener = app.listen(process.env.PORT || 3000, () => {
